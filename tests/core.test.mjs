@@ -1,0 +1,9 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import {SAMPLE,parseList,getPool,pick,randomInt,csvCell} from '../draw-core.mjs';
+test('user sample preserves hierarchy and cleans empty parentheses',()=>{const e=parseList(SAMPLE);assert.equal(e.length,12);assert.equal(getPool(e,'roots').length,6);assert.equal(e[0].name,'高莉');assert.equal(e[2].parentId,e[1].id);assert.deepEqual(e[2].path,['刘振','群-刘振']);assert.equal(getPool(e,'group:'+e[1].id).length,3);assert.equal(getPool(e,'leaves').length,10);});
+test('mixed numbering, tabs, full-width indentation, CRLF, blanks, punctuation',()=>{const e=parseList('\uFEFF１． 张三\r\n\t（1） 甲（队长）\r\n　　二、乙\r\n\n2) 李四\r\n  1. 子\r\n3、王五');assert.equal(e.length,6);assert.equal(e[1].name,'甲（队长）');assert.equal(e[1].parentId,'0');assert.equal(e[2].parentId,'0');assert.equal(e[3].parentId,null);assert.equal(e[4].parentId,e[3].id);assert.equal(e[5].name,'王五');});
+test('plain names and meaningful numerals survive',()=>{assert.deepEqual(parseList('007\nA-刘振\n高莉(策划)\n- 张三\n  * 李四').map(e=>e.name),['007','A-刘振','高莉(策划)','张三','李四']);});
+test('selection is unique within a batch and respects exclusions across rounds',()=>{const e=parseList(SAMPLE),first=pick(getPool(e,'roots'),3),used=new Set(first.map(w=>w.id)),second=pick(getPool(e,'roots',used,true),3);assert.equal(new Set([...first,...second].map(w=>w.id)).size,6);assert.equal(getPool(e,'roots',used,false).length,6);assert.throws(()=>pick(e,13),RangeError);assert.throws(()=>pick(e,0),RangeError);assert.equal(parseList(' \n\t').length,0);});
+test('random sampler rejects modulo bias range',()=>{let reads=0;const values=[4294967295,5];const fake={getRandomValues(a){a[0]=values[reads++];}};assert.equal(randomInt(6,fake),5);assert.equal(reads,2);});
+test('CSV escapes values and spreadsheet formula injection',()=>{assert.equal(csvCell('=1+1'),'"\'=1+1"');assert.equal(csvCell('张"三'),'"张""三"');});

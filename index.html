@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#f7f8f5"><meta name="description" content="导入名单，识别序号与缩进，轻松完成随机抽选。">
+<title>好签 · 让选择多一点惊喜</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'%3E%3Crect width='40' height='40' rx='12' fill='%23e4674b'/%3E%3Cpath d='M20 6L23 17L34 20L23 23L20 34L17 23L6 20L17 17Z' fill='white'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<svg class="svg-defs" aria-hidden="true"><defs>
+<symbol id="spark" viewBox="0 0 24 24"><path d="m12 1 2.7 8.3L23 12l-8.3 2.7L12 23l-2.7-8.3L1 12l8.3-2.7Z" fill="currentColor" stroke="none"/></symbol>
+<symbol id="upload" viewBox="0 0 24 24"><path d="M12 16V3m-5 5 5-5 5 5M4 15v5h16v-5"/></symbol>
+<symbol id="arrow" viewBox="0 0 24 24"><path d="M4 12h16m-6-6 6 6-6 6"/></symbol>
+<symbol id="people" viewBox="0 0 24 24"><circle cx="10" cy="8" r="3"/><path d="M4 21v-3a6 6 0 0 1 12 0v3M17 5a3 3 0 0 1 0 6m3 10v-3a5 5 0 0 0-2-4"/></symbol>
+<symbol id="expand" viewBox="0 0 24 24"><path d="M9 4H4v5m11-5h5v5M4 15v5h5m6 0h5v-5"/></symbol>
+<symbol id="download" viewBox="0 0 24 24"><path d="M12 3v13m-5-5 5 5 5-5M4 16v5h16v-5"/></symbol>
+<symbol id="reset" viewBox="0 0 24 24"><path d="M4 10a8 8 0 1 1 0 5M4 4v6h6"/></symbol>
+<symbol id="check" viewBox="0 0 24 24"><path d="m5 12 4 4L19 6"/></symbol>
+</defs></svg>
+<header class="topbar"><a class="brand" href="./" aria-label="好签首页"><span class="brand-mark"><svg><use href="#spark"/></svg></span><b>好签<span class="brand-dot">.</span></b><span class="brand-en">LUCKY DRAW</span></a><div class="top-right"><span class="local-tag"><i></i> 名单仅保存在当前浏览器</span><button class="text-button" id="helpBtn">使用说明 <span>↗</span></button></div></header>
+<main>
+<section class="page-heading"><div><div class="eyebrow">A LITTLE CHANCE. A GOOD CHOICE.</div><h1>把选择，交给一点运气<span>。</span></h1><p>一份名单，一次期待。让每一个名字，都有被选中的可能。</p></div><div class="heading-note"><svg><use href="#spark"/></svg><span>公平随机<br><b>惊喜发生中</b></span></div></section>
+<div class="workspace">
+<aside class="panel roster-panel">
+<div class="panel-heading"><div class="section-title"><svg><use href="#people"/></svg><h2>抽选名单</h2><span class="count-pill" id="totalBadge">12</span></div><button class="text-button small" id="editBtn">编辑</button></div>
+<button class="upload-zone" id="uploadBtn"><span class="upload-icon"><svg><use href="#upload"/></svg></span><strong>点击上传或拖拽名单</strong><span>支持 .txt / .md，自动识别序号与缩进</span></button>
+<input type="file" id="fileInput" accept=".txt,.md,text/plain,text/markdown" hidden>
+<div class="roster-meta"><span id="rosterMeta">6 位主名单 · 6 个子条目</span><span class="parsed-label"><svg><use href="#check"/></svg> 已识别层级</span></div>
+<div class="roster-tree" id="rosterTree" aria-label="已识别名单"></div>
+<div class="roster-bottom"><span><i class="sample-dot"></i><span id="sourceLabel">示例名单</span></span><button id="pasteBtn" class="text-button small">粘贴名单 <span>↗</span></button></div>
+</aside>
+<section class="draw-column">
+<div class="panel draw-panel" id="drawPanel">
+<div class="stage-top"><span class="stage-label"><i></i><span id="stageStatus">一切就绪，等你开始</span></span><button class="icon-button" id="fullscreenBtn" title="全屏抽选" aria-label="全屏抽选"><svg><use href="#expand"/></svg></button></div>
+<div class="draw-stage" id="drawStage"><div class="orbit orbit-one"></div><div class="orbit orbit-two"></div><span class="deco deco-a">✧</span><span class="deco deco-b">✦</span><span class="deco deco-c">+</span><div class="stage-content" id="stageContent" aria-live="polite"><span class="stage-kicker">THE NEXT LUCKY ONE</span><h2>下一个，<br>会是谁<span>？</span></h2><p>每一次随机，都藏着一个小惊喜</p></div><div class="confetti" id="confetti" aria-hidden="true"></div></div>
+<div class="draw-action"><div class="pool-note">本轮候选 <b id="availableCount">6</b> 位<span class="divider">/</span><span id="ruleNote">等概率 · 不重复抽选</span></div><button id="drawBtn" class="primary draw-button"><svg><use href="#spark"/></svg><span>开始抽选</span><svg><use href="#arrow"/></svg></button><div class="keyboard-hint">按 <kbd>Space</kbd> 也可以开始 <span>·</span> <span id="roundHint">好运即将揭晓</span></div></div>
+</div>
+<div class="panel settings-panel"><div class="setting"><label for="scopeSelect">抽选范围</label><select id="scopeSelect"><option value="roots">仅主名单</option><option value="all">全部条目</option><option value="leaves">仅末级条目</option></select></div><div class="setting number-setting"><label for="drawCount">每次抽选</label><div class="stepper"><button id="minusBtn" aria-label="减少抽选数量">−</button><input id="drawCount" type="number" min="1" max="50" value="1" aria-label="每次抽选人数"><span>位</span><button id="plusBtn" aria-label="增加抽选数量">+</button></div></div><label class="toggle-setting"><span><b>不重复抽选</b><small>已选名字自动移出候选</small></span><input type="checkbox" id="noRepeat" checked><span class="toggle" aria-hidden="true"></span></label></div>
+</section>
+</div>
+<section class="panel history-panel"><div class="history-heading"><div class="section-title"><span class="history-symbol">↺</span><h2>抽选记录</h2><span class="count-pill" id="historyCount">0</span><span class="history-caption">留住每一次好运</span></div><div class="history-tools"><button class="text-button small" id="exportBtn" disabled><svg><use href="#download"/></svg>导出结果</button><button class="text-button small" id="resetBtn" disabled><svg><use href="#reset"/></svg>重置抽选</button></div></div><div id="historyList" class="history-list"><div class="empty-history"><span>✧</span> 还没有抽选记录，第一个幸运名字正等着你。</div></div></section>
+<footer><span>好签 <span class="footer-dot">·</span> 让选择多一点惊喜</span><span>浏览器本地处理 <span class="footer-dot">/</span> 等概率随机抽选</span></footer>
+</main>
+<dialog id="importDialog"><div class="modal-heading"><div><span class="eyebrow">YOUR LIST, YOUR POSSIBILITIES</span><h2>导入抽选名单</h2></div><button class="icon-button close-modal" aria-label="关闭">×</button></div><p class="modal-description">每行一个名字，保留缩进即可建立分组。序号和空括号会自动去除。</p><textarea id="listInput" spellcheck="false" aria-label="粘贴或编辑名单" placeholder="1. 张三&#10;2. 李四&#10;   1. 小组 A&#10;   2. 小组 B"></textarea><div class="import-summary" id="importSummary"></div><div class="modal-footer"><button class="text-button" id="sampleBtn">填入示例</button><div><button class="secondary close-modal">取消</button><button class="primary" id="applyBtn">确认导入 <span>↗</span></button></div></div></dialog>
+<dialog id="helpDialog"><div class="modal-heading"><h2>三步，遇见一个好名字</h2><button class="icon-button close-modal" aria-label="关闭">×</button></div><div class="help-steps"><div><b>01</b><section><h3>上传或粘贴名单</h3><p>支持 UTF-8、GB18030 或 UTF-16 文本文件。每行一个名字，数字序号会自动去除；空格、Tab 和全角空格缩进会识别为上下级。</p></section></div><div><b>02</b><section><h3>设定你的抽选方式</h3><p>默认从主名单抽选。也可选全部条目、仅末级条目，或指定分组的所有子条目。每个条目机会相同；同名但分行的条目会被视为独立候选。</p></section></div><div><b>03</b><section><h3>开始，等好运揭晓</h3><p>点击按钮或按空格开始。每轮内不重复；打开“不重复抽选”后，跨轮也不重复。重置抽选会清空记录并恢复所有候选。</p></section></div></div><p class="help-note">名单和记录保存在当前浏览器；清除浏览器数据后会丢失。导出 CSV 可保存抽选结果。</p></dialog>
+<div role="status" id="toast" class="toast"></div>
+<script type="module" src="app.mjs"></script>
+</body></html>
